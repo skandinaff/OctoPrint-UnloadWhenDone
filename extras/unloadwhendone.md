@@ -21,7 +21,12 @@ tags:
 
 compatibility:
   octoprint:
-  - 1.11.2
+  - ">=1.11.2"
+  os:
+  - linux
+  - windows
+  - macos
+  - freebsd
   python: ">=3.9,<4"
 ---
 
