@@ -1,0 +1,25 @@
+<h3>Unload When Done</h3>
+<p>Arm with the <i class="fa fa-eject"></i> navbar button, Telegram <code>/ctrl</code>, or by sending
+<code>@UNLOAD_ON</code> / <code>@UNLOAD_OFF</code> / <code>@UNLOAD_TOGGLE</code> / <code>@UNLOAD_STATUS</code>
+(e.g. from OctoApp). It disarms after every print and unloads only after a successful one.</p>
+<form class="form-horizontal" onsubmit="return false;">
+    <div class="control-group">
+        <label class="control-label">Fallback temperature (°C)</label>
+        <div class="controls"><input type="number" class="input-mini" data-bind="value: settings.plugins.unloadwhendone.fallback_temp">
+            <span class="help-block">Used when the print's hotend temperature is unknown or below the minimum.</span></div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">Minimum temperature (°C)</label>
+        <div class="controls"><input type="number" class="input-mini" data-bind="value: settings.plugins.unloadwhendone.min_temp"></div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">Unload G-code</label>
+        <div class="controls"><textarea rows="6" class="input-xlarge" style="font-family: monospace" data-bind="value: settings.plugins.unloadwhendone.unload_script"></textarea>
+            <span class="help-block"><code>{temp}</code> is replaced with the print temperature.</span></div>
+    </div>
+    <div class="control-group"><div class="controls">
+        <label class="checkbox"><input type="checkbox" data-bind="checked: settings.plugins.unloadwhendone.lcd_feedback"> Show state changes on the printer LCD (M117)</label>
+        <label class="checkbox"><input type="checkbox" data-bind="checked: settings.plugins.unloadwhendone.telegram_feedback"> Send Telegram messages (needs "User Notification" enabled in the Telegram plugin)</label>
+        <label class="checkbox"><input type="checkbox" data-bind="checked: settings.plugins.unloadwhendone.remind_on_start"> Remind about the state in Telegram when a print starts</label>
+    </div></div>
+</form>
