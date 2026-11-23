@@ -49,7 +49,6 @@ class UnloadWhenDonePlugin(
             "M104 S0\n"
             "M117 Filament unloaded",
             "lcd_feedback": True,
-            "telegram_feedback": True,
             "remind_on_start": True,
             "add_custom_controls": True,
         }
@@ -91,7 +90,7 @@ class UnloadWhenDonePlugin(
         self._logger.info("Unload after print %s (via %s)", "ARMED" if value else "disarmed", source)
         self._push_state()
         if changed or source in ("gcode", "status"):
-            self._feedback("Unload after: ON" if value else "Unload after: OFF", self._state_text())
+            self._lcd("Unload after: ON" if value else "Unload after: OFF")
 
     def _state_text(self):
         if self._armed:
@@ -101,14 +100,11 @@ class UnloadWhenDonePlugin(
     def _push_state(self):
         self._plugin_manager.send_plugin_message(self._identifier, {"armed": self._armed})
 
-    def _feedback(self, lcd_text, telegram_text):
+    def _lcd(self, text):
         if self._settings.get_boolean(["lcd_feedback"]) and self._printer.is_operational():
-            self._printer.commands(f"M117 {lcd_text[:20]}", tags={"source:plugin"})
-        self._telegram(telegram_text)
+            self._printer.commands(f"M117 {text[:20]}", tags={"source:plugin"})
 
     def _telegram(self, text):
-        if not self._settings.get_boolean(["telegram_feedback"]):
-            return
         plugin = self._plugin_manager.get_plugin_info("telegram", require_enabled=True)
         if plugin is None or plugin.implementation is None:
             return
@@ -184,7 +180,6 @@ class UnloadWhenDonePlugin(
         lines = [line.strip() for line in script.splitlines() if line.strip()]
         self._logger.info("Print done, unloading filament at %s°C", temp)
         self._push_state()
-        self._telegram(f"Печать завершена, выгружаю филамент при {temp}°C")
         return None, lines
 
     # ------------------------------------------------------------------ events
@@ -204,7 +199,6 @@ class UnloadWhenDonePlugin(
             if was_armed:
                 self._logger.info("Print ended (%s), not unloading; disarmed", event)
                 self._push_state()
-                self._telegram("Печать не завершилась, филамент НЕ выгружен")
         elif event == Events.CLIENT_OPENED:
             self._push_state()
 
