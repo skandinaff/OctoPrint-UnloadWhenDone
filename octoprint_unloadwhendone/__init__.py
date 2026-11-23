@@ -100,8 +100,8 @@ class UnloadWhenDonePlugin(
 
     def _state_text(self):
         if self._armed:
-            return "⏏ Филамент будет выгружен после печати"
-        return "Филамент НЕ будет выгружен после печати"
+            return "⏏ Filament will be unloaded after this print"
+        return "Filament will NOT be unloaded after this print"
 
     def _push_state(self):
         self._plugin_manager.send_plugin_message(self._identifier, {"armed": self._armed})
@@ -196,7 +196,7 @@ class UnloadWhenDonePlugin(
             self._push_state()
             if self._settings.get_boolean(["remind_on_start"]):
                 # LCD shows print progress now; only remind via Telegram.
-                hint = "" if self._armed else " (включить: /ctrl)"
+                hint = "" if self._armed else " (enable: /ctrl)"
                 self._telegram(self._state_text() + hint)
         elif event in (Events.PRINT_FAILED, Events.PRINT_CANCELLED):
             with self._lock:
