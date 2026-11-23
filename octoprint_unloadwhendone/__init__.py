@@ -18,7 +18,8 @@ import flask
 import octoprint.plugin
 from octoprint.events import Events
 
-CONTROL_GROUP_NAME = "Unload filament after print"
+CONTROL_GROUP_NAME = "⏏ Unload"
+OLD_CONTROL_GROUP_NAMES = {"Unload filament after print"}
 AT_COMMANDS = {"UNLOAD_ON", "UNLOAD_OFF", "UNLOAD_TOGGLE", "UNLOAD_STATUS"}
 TEMP_RE = re.compile(r"^M10[49]\b.*?\bS(\d+(?:\.\d+)?)", re.IGNORECASE)
 TOOL_RE = re.compile(r"\bT(\d+)\b", re.IGNORECASE)
@@ -65,7 +66,12 @@ class UnloadWhenDonePlugin(
     def _ensure_custom_controls(self):
         """Add a custom-controls group so Telegram's /ctrl (and the Control tab) can arm it."""
         controls = self._settings.global_get(["controls"]) or []
+        controls = [
+            c for c in controls if not (isinstance(c, dict) and c.get("name") in OLD_CONTROL_GROUP_NAMES)
+        ]
         if any(isinstance(c, dict) and c.get("name") == CONTROL_GROUP_NAME for c in controls):
+            self._settings.global_set(["controls"], controls)
+            self._settings.save()
             return
         controls.append(
             {
